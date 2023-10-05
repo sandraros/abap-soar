@@ -5,7 +5,7 @@ INTERFACE zif_soar_manager
            interface_name            TYPE seoclsname,
            public_class_name         TYPE seoclsname,
            in_development_class_name TYPE seoclsname,
-           hash_key                  TYPE seoclsname,
+           hash_key                  TYPE string,
          END OF ty_class.
   TYPES ty_classes TYPE STANDARD TABLE OF ty_class WITH EMPTY KEY.
 
@@ -22,9 +22,5 @@ INTERFACE zif_soar_manager
       VALUE(result)     TYPE REF TO object
     RAISING
       zcx_soar.
-
-  METHODS set_outsourced_classes
-    IMPORTING
-      classes TYPE ty_classes.
 
 ENDINTERFACE.

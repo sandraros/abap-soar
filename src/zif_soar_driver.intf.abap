@@ -9,11 +9,17 @@ INTERFACE zif_soar_driver
 *    RAISING
 *      zcx_soar_gensrp.
 
+  TYPES ty_abap_source_code TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+
   METHODS get_abap_source_code
     IMPORTING
       class_name    TYPE seoclsname
     RETURNING
-      VALUE(result) TYPE zif_soar_gensrp=>ty_abap_source_code.
+      VALUE(result) TYPE ty_abap_source_code.
+
+  METHODS get_classes
+    RETURNING
+      VALUE(result) TYPE zif_soar_manager=>ty_classes.
 
   METHODS instantiate
     IMPORTING

@@ -143,7 +143,13 @@ CLASS lcl_gensrp IMPLEMENTATION.
     IF via_perform = abap_false.
 
       DATA(absolute_name) = |\\PROGRAM={ zif_soar_gensrp~srp_name }\\CLASS={ class_name }|.
-      CREATE OBJECT result TYPE (absolute_name) PARAMETER-TABLE parameters.
+      " EXCEPTION-TABLE is required by kernels before note 2866213, even if no specific need.
+      " NB: note 2866213 - ABAP short dump RUNT_ILLEGAL_SWITCH at CREATE OBJECT ... PARAMETER-TABLE
+      " at https://me.sap.com/notes/2866213/E.
+      DATA(dummy_exception_table) = VALUE abap_excpbind_tab( ).
+      CREATE OBJECT result TYPE (absolute_name)
+                            PARAMETER-TABLE parameters
+                            EXCEPTION-TABLE dummy_exception_table.
 
     ELSE.
 

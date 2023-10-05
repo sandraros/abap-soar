@@ -2,10 +2,11 @@ INTERFACE zif_soar_gensrp
   PUBLIC .
 
   TYPES ty_abap_source_code TYPE STANDARD TABLE OF string WITH EMPTY KEY.
-  TYPES : BEGIN OF ty_result_object,
-            parameter_name TYPE string,
-            bound_optional TYPE abap_bool,
-          END OF ty_result_object.
+  TYPES:
+    BEGIN OF ty_result_object,
+      parameter_name TYPE string,
+      bound_optional TYPE abap_bool,
+    END OF ty_result_object.
 
   DATA srp_name TYPE syrepid READ-ONLY.
   DATA message TYPE string READ-ONLY.

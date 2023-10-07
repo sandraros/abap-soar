@@ -3,18 +3,17 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>ZSOAR_GENSRP_PACKAGER</NAME>
-    <DBAPL>S</DBAPL>
-    <SUBC>1</SUBC>
+    <NAME>ZSOAR_DEMO_INHOUSEDEV_FORM</NAME>
+    <SUBC>S</SUBC>
+    <RLOAD>E</RLOAD>
     <FIXPT>X</FIXPT>
-    <LDBNAME>D$S</LDBNAME>
     <UCCHECK>X</UCCHECK>
    </PROGDIR>
    <TPOOL>
     <item>
      <ID>R</ID>
-     <ENTRY>Packager of abap-generate-srp</ENTRY>
-     <LENGTH>29</LENGTH>
+     <ENTRY>In-house development with classic subroutines</ENTRY>
+     <LENGTH>45</LENGTH>
     </item>
    </TPOOL>
   </asx:values>

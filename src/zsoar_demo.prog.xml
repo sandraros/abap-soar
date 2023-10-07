@@ -16,6 +16,42 @@
      <ENTRY>Demonstration</ENTRY>
      <LENGTH>13</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>B01</KEY>
+     <ENTRY>Outsourced/In-house</ENTRY>
+     <LENGTH>29</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>B02</KEY>
+     <ENTRY>Subroutine pool code with subroutines or full ABAP Objects</ENTRY>
+     <LENGTH>116</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>FORM</KEY>
+     <ENTRY>With subroutines</ENTRY>
+     <LENGTH>24</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>FULL_OO</KEY>
+     <ENTRY>Full ABAP Objects</ENTRY>
+     <LENGTH>25</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>INHOUSE</KEY>
+     <ENTRY>In-house ABAP code</ENTRY>
+     <LENGTH>26</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>OUTSOURC</KEY>
+     <ENTRY>Simulate outsourced ABAP code</ENTRY>
+     <LENGTH>37</LENGTH>
+    </item>
    </TPOOL>
   </asx:values>
  </asx:abap>

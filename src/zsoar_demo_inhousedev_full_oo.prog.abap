@@ -1,5 +1,4 @@
-PROGRAM.
-INCLUDE zsoar_gensrp_forms.
+PROGRAM REDUCED FUNCTIONALITY.
 CLASS lcl_soar_demo DEFINITION.
   PUBLIC SECTION.
     INTERFACES zif_soar_demo.

@@ -3,19 +3,17 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>ZSOAR_GENSRP</NAME>
-    <DBAPL>S</DBAPL>
-    <DBNA>D$</DBNA>
-    <SUBC>I</SUBC>
+    <NAME>ZSOAR_DEMO_INHOUSEDEV_FULL_OO</NAME>
+    <SUBC>S</SUBC>
+    <RLOAD>E</RLOAD>
     <FIXPT>X</FIXPT>
-    <LDBNAME>D$S</LDBNAME>
     <UCCHECK>X</UCCHECK>
    </PROGDIR>
    <TPOOL>
     <item>
      <ID>R</ID>
-     <ENTRY>MIT License https://github.com/sandraros/abap-generate-srp</ENTRY>
-     <LENGTH>58</LENGTH>
+     <ENTRY>In-house development full ABAP Objects</ENTRY>
+     <LENGTH>38</LENGTH>
     </item>
    </TPOOL>
   </asx:values>

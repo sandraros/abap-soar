@@ -12,11 +12,6 @@
    </PROGDIR>
    <TPOOL>
     <item>
-     <ID>R</ID>
-     <ENTRY>Demonstration</ENTRY>
-     <LENGTH>13</LENGTH>
-    </item>
-    <item>
      <ID>I</ID>
      <KEY>B01</KEY>
      <ENTRY>Outsourced/In-house</ENTRY>
@@ -25,20 +20,37 @@
     <item>
      <ID>I</ID>
      <KEY>B02</KEY>
-     <ENTRY>Subroutine pool code with subroutines or full ABAP Objects</ENTRY>
+     <ENTRY>Way to create object/call method of local class in Subroutine Pool</ENTRY>
      <LENGTH>116</LENGTH>
+    </item>
+    <item>
+     <ID>R</ID>
+     <ENTRY>Demonstration</ENTRY>
+     <LENGTH>13</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>CREATEOB</KEY>
+     <ENTRY>Create Object</ENTRY>
+     <LENGTH>21</LENGTH>
+    </item>
+    <item>
+     <ID>S</ID>
+     <KEY>FACTORY</KEY>
+     <ENTRY>Factory Method</ENTRY>
+     <LENGTH>22</LENGTH>
     </item>
     <item>
      <ID>S</ID>
      <KEY>FORM</KEY>
-     <ENTRY>With subroutines</ENTRY>
-     <LENGTH>24</LENGTH>
+     <ENTRY>Via internal subroutine</ENTRY>
+     <LENGTH>31</LENGTH>
     </item>
     <item>
      <ID>S</ID>
      <KEY>FULL_OO</KEY>
-     <ENTRY>Full ABAP Objects</ENTRY>
-     <LENGTH>25</LENGTH>
+     <ENTRY>Externally /Absolute type name</ENTRY>
+     <LENGTH>38</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -49,7 +61,7 @@
     <item>
      <ID>S</ID>
      <KEY>OUTSOURC</KEY>
-     <ENTRY>Simulate outsourced ABAP code</ENTRY>
+     <ENTRY>Generate Subroutine Pool</ENTRY>
      <LENGTH>37</LENGTH>
     </item>
    </TPOOL>

@@ -20,6 +20,23 @@
      <LENGTH>84</LENGTH>
     </item>
    </TPOOL>
+   <SOTR_USE>
+    <SOTR_USE>
+     <PGMID>LIMU</PGMID>
+     <OBJECT>CPUB</OBJECT>
+     <OBJ_NAME>ZCX_SOAR</OBJ_NAME>
+     <CONCEPT>E7D1A9770C521EEE99B6A62EF80A8270</CONCEPT>
+     <LFD_NUM>0001</LFD_NUM>
+    </SOTR_USE>
+   </SOTR_USE>
+   <SOTS_USE>
+    <SOTR_USEU>
+     <PGMID>LIMU</PGMID>
+     <OBJECT>CPUB</OBJECT>
+     <OBJ_NAME>ZCX_SOAR</OBJ_NAME>
+     <LFD_NUM>0001</LFD_NUM>
+    </SOTR_USEU>
+   </SOTS_USE>
   </asx:values>
  </asx:abap>
 </abapGit>

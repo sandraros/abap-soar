@@ -6,6 +6,8 @@ CLASS zcx_soar DEFINITION
 
   PUBLIC SECTION.
 
+    CONSTANTS zcx_soar TYPE sotr_conc VALUE 'E7D1A9770C521EEE99B6A62EF80A8270'.
+
     METHODS constructor
       IMPORTING
         text                    TYPE clike OPTIONAL
@@ -13,7 +15,7 @@ CLASS zcx_soar DEFINITION
         msgv2                   TYPE clike OPTIONAL
         msgv3                   TYPE clike OPTIONAL
         msgv4                   TYPE clike OPTIONAL
-        textid                  LIKE textid OPTIONAL
+        textid                  LIKE textid DEFAULT zcx_soar
         previous                TYPE REF TO cx_root OPTIONAL
         substitute_placeholders TYPE abap_bool DEFAULT abap_true.
 

@@ -10,9 +10,9 @@ INTERFACE zif_soar_provider
     RETURNING
       VALUE(result) TYPE zif_soar_manager=>ty_abap_source_code.
 
-  METHODS get_classes
+  METHODS get_abap_hash_keys
     RETURNING
-      VALUE(result) TYPE zif_soar_manager=>ty_classes.
+      VALUE(result) TYPE zif_soar_manager=>ty_abap_hash_keys.
 
 *  METHODS instantiate
 *    IMPORTING

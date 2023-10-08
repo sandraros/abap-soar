@@ -13,7 +13,6 @@ CLASS zcl_soar_manager DEFINITION
     DATA srp_id TYPE zsoar_srp_id.
     DATA info_generate_subroutine_pool TYPE zif_soar_manager=>ty_generate_subroutine_pool.
     DATA provider TYPE REF TO zif_soar_provider.
-    DATA classes TYPE zif_soar_manager=>ty_abap_hash_keys.
     DATA zsoar_inhousedev TYPE zsoar_inhousedev.
 
     METHODS check_subroutine_pool
@@ -24,7 +23,7 @@ CLASS zcl_soar_manager DEFINITION
 
     METHODS generate_subroutine_pool
       IMPORTING
-        abap_source_code TYPE zif_soar_manager=>ty_abap_source_code
+        abap_source_code TYPE zif_soar_provider=>ty_abap_source_code
       RETURNING
         VALUE(result)    TYPE zif_soar_manager=>ty_generate_subroutine_pool
       RAISING
@@ -32,9 +31,9 @@ CLASS zcl_soar_manager DEFINITION
 
     METHODS get_hash_key
       IMPORTING
-        abap_source_code TYPE zif_soar_manager=>ty_abap_source_code
+        abap_source_code TYPE zif_soar_provider=>ty_abap_source_code
       RETURNING
-        VALUE(result)    TYPE string
+        VALUE(result)    TYPE dyn_abap_dte_fingerprint
       RAISING
         cx_abap_message_digest.
 
@@ -101,14 +100,13 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
     DATA error TYPE REF TO cx_root.
 
-    classes = provider->get_abap_hash_keys( ).
-
     SELECT SINGLE *
         FROM zsoar_inhousedev
         INTO @zsoar_inhousedev
         WHERE srp_id = @srp_id.
 
-    IF zsoar_inhousedev-subroutine_pool_name IS NOT INITIAL.
+    IF zsoar_inhousedev-subroutine_pool_name IS NOT INITIAL
+        AND zsoar_inhousedev-inactive = abap_false.
 
       check_subroutine_pool( zsoar_inhousedev-subroutine_pool_name ).
 
@@ -118,14 +116,6 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
       DATA(abap_source_code) = provider->get_abap_source_code( srp_id ).
 
-      classes = provider->get_abap_hash_keys( ).
-
-      DATA(class) = REF #( classes[ srp_id = srp_id ] OPTIONAL ).
-      IF class IS NOT BOUND.
-        RAISE EXCEPTION NEW zcx_soar( text  = 'Subroutine pool ID &1 not defined'(009)
-                                      msgv1 = srp_id ).
-      ENDIF.
-
       " Calculate the hash key
       TRY.
           DATA(hash_key) = get_hash_key( abap_source_code ).
@@ -134,32 +124,20 @@ CLASS zcl_soar_manager IMPLEMENTATION.
       ENDTRY.
 
       " Check authorizations for the hash key
-      " Check whether the hash key is permitted
-      IF hash_key = class->hash_key.
+      AUTHORITY-CHECK OBJECT 'ZSOAR_HASH'
+          ID 'ZSOAR_SRP'  FIELD srp_id
+          ID 'ZSOAR_HASH' FIELD hash_key.
 
-*        DATA(xuval_hash_key) = CONV xuval( hash_key ). " Truncate after 40 characters
-*        AUTHORITY-CHECK OBJECT 'ZSOAR_HASH'
-*            ID 'SRP_ID'        FIELD srp_id
-*            ID 'ABAP_HASH_KEY' FIELD xuval_hash_key.
-*        IF sy-subrc <> 0.
-*
-*          AUTHORITY-CHECK OBJECT 'ZSOAR_DATE'
-*              ID 'SRP_ID' FIELD srp_id
-*              ID 'DATE'   FIELD sy-datum.
-*
-*          IF sy-subrc <> 0.
-*            RAISE EXCEPTION NEW zcx_soar( text  = 'Current version of ABAP code is not authorized'(010)
-*                                          msgv1 = srp_id ).
-*          ENDIF.
-*        ENDIF.
+      IF sy-subrc <> 0.
 
-      ELSE.
+        AUTHORITY-CHECK OBJECT 'ZSOAR_DATE'
+            ID 'ZSOAR_SRP'  FIELD srp_id
+            ID 'ZSOAR_DATE' FIELD sy-datum.
 
-        RAISE EXCEPTION NEW zcx_soar( text  = 'Invalid hash key for &1. Act: &2. Exp: &3. Please contact the support.'(008)
-                                      msgv1 = srp_id
-                                      msgv2 = hash_key
-                                      msgv3 = class->hash_key ).
-
+        IF sy-subrc <> 0.
+          RAISE EXCEPTION NEW zcx_soar( text  = 'This version of the ABAP code is not authorized'(010)
+                                        msgv1 = srp_id ).
+        ENDIF.
       ENDIF.
 
       " Generate the subroutine pool
@@ -176,10 +154,12 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
     cl_abap_message_digest=>calculate_hash_for_char(
       EXPORTING
-        if_algorithm     = 'SHA-256'
-        if_data          = concat_lines_of( sep = |\r\n| table = abap_source_code )
+        if_algorithm     = 'MD5'
+        if_data          = concat_lines_of( sep = |\n| table = abap_source_code )
       IMPORTING
-        ef_hashb64string = result ).
+        ef_hashb64string = DATA(md5_hash_key) ).
+
+    result = md5_hash_key.
 
   ENDMETHOD.
 

@@ -31,24 +31,20 @@ CLASS lcl_soar_provider IMPLEMENTATION.
 
     result = VALUE #(
             ( `PROGRAM.` )
-            ( `INCLUDE zsoar_gensrp_forms.` )
-            ( `CLASS lcl_soar_demo DEFINITION.` )
-            ( `  PUBLIC SECTION.` )
-            ( `    INTERFACES zif_soar_demo.` )
-            ( `ENDCLASS.` )
-            ( `CLASS lcl_soar_demo IMPLEMENTATION.` )
-            ( `  METHOD zif_soar_demo~popup.` )
-            ( `    MESSAGE text TYPE 'I'.` )
-            ( `  ENDMETHOD.` )
-            ( `ENDCLASS.` ) ).
+            ( `INCLUDE zsoar_srpoo_forms.                      ` )
+            ( `CLASS lcl_soar_demo DEFINITION.                 ` )
+            ( `  PUBLIC SECTION.                               ` )
+            ( `    INTERFACES zif_soar_demo.                   ` )
+            ( `ENDCLASS.                                       ` )
+            ( `CLASS lcl_soar_demo IMPLEMENTATION.             ` )
+            ( `  METHOD zif_soar_demo~create.                  ` )
+            ( `    result = NEW lcl_soar_demo( ).              ` )
+            ( `  ENDMETHOD.                                    ` )
+            ( `  METHOD zif_soar_demo~popup.                   ` )
+            ( `    MESSAGE text TYPE 'I'.                      ` )
+            ( `  ENDMETHOD.                                    ` )
+            ( `ENDCLASS.                                       ` ) ).
 
-  ENDMETHOD.
-
-  METHOD zif_soar_provider~get_abap_hash_keys.
-    " This hash key represents a version of outsourced ABAP code, agreed by Accenture and Client
-    " parties, and MUST NOT be changed to reflect ABAP changes done without consent by both parties,
-    " or there will be legal pursue.
-    result = VALUE #( ( srp_id = 'ZSOAR_DEMO' hash_key = 'zksFQhfRoiWQ9X+FlukkbtktEprwjGsAkfpphOGIhLI=' ) ).
   ENDMETHOD.
 
 ENDCLASS.
@@ -75,27 +71,34 @@ INITIALIZATION.
   text_b03 = 'Instantiate via factory method or via create object'(b03).
 
 START-OF-SELECTION.
-  DATA(zsoar_inhousedev) = VALUE zsoar_inhousedev(
-        srp_id               = 'ZSOAR_DEMO'
-        subroutine_pool_name = COND #( WHEN form = abap_true
-                                       THEN 'ZSOAR_DEMO_INHOUSEDEV_FORM'
-                                       ELSE 'ZSOAR_DEMO_INHOUSEDEV_FULL_OO' )
-        inactive             = xsdbool( inhouse = abap_false ) ).
-  MODIFY zsoar_inhousedev FROM @zsoar_inhousedev.
-  COMMIT WORK.
 
-  DATA(soar_provider) = lcl_soar_provider=>create( ).
-  DATA(soar_manager) = zcl_soar_manager=>zif_soar_manager~create( srp_id   = 'ZSOAR_DEMO'
-                                                                  provider = soar_provider ).
-  DATA(demo) = CAST zif_soar_demo(
-                cond #(
-                when factory = abap_true
-                then soar_manager->call_static_method( class_name    = 'LCL_SOAR_DEMO'
-                                                       method_name   = 'CREATE'
-                                                       result_object = VALUE #(
-                                                                        parameter_name = 'RESULT'
-                                                                        bound_optional = abap_false )
-                                                       via_perform   = xsdbool( form = abap_true ) )
-                else soar_manager->create_object( class_name  = 'LCL_SOAR_DEMO'
-                                                  via_perform = xsdbool( form = abap_true ) ) ) ).
-  demo->popup( 'Hello world' ).
+  TRY.
+
+      DATA(zsoar_inhousedev) = VALUE zsoar_inhousedev(
+            srp_id               = 'ZSOAR_DEMO'
+            subroutine_pool_name = COND #( WHEN form = abap_true
+                                           THEN 'ZSOAR_DEMO_INHOUSEDEV_FORM'
+                                           ELSE 'ZSOAR_DEMO_INHOUSEDEV_FULL_OO' )
+            inactive             = xsdbool( inhouse = abap_false ) ).
+      MODIFY zsoar_inhousedev FROM @zsoar_inhousedev.
+      COMMIT WORK.
+
+      DATA(soar_provider) = lcl_soar_provider=>create( ).
+      DATA(soar_manager) = zcl_soar_manager=>zif_soar_manager~create( srp_id   = 'ZSOAR_DEMO'
+                                                                      provider = soar_provider ).
+      DATA(demo) = CAST zif_soar_demo(
+                    COND #(
+                    WHEN factory = abap_true
+                    THEN soar_manager->call_static_method( class_name    = 'LCL_SOAR_DEMO'
+                                                           method_name   = 'ZIF_SOAR_DEMO~CREATE'
+                                                           result_object = VALUE #(
+                                                                            parameter_name = 'RESULT'
+                                                                            bound_optional = abap_false )
+                                                           via_perform   = xsdbool( form = abap_true ) )
+                    ELSE soar_manager->create_object( class_name  = 'LCL_SOAR_DEMO'
+                                                      via_perform = xsdbool( form = abap_true ) ) ) ).
+      demo->popup( 'Hello world' ).
+
+    CATCH cx_root INTO DATA(error).
+      MESSAGE error TYPE 'I' DISPLAY LIKE 'E'.
+  ENDTRY.

@@ -1,11 +1,6 @@
 INTERFACE zif_soar_manager
   PUBLIC .
 
-  TYPES: BEGIN OF ty_abap_hash_key,
-           srp_id   TYPE zsoar_srp_id,
-           hash_key TYPE zsoar_abap_hash_key,
-         END OF ty_abap_hash_key.
-  TYPES ty_abap_hash_keys TYPE HASHED TABLE OF ty_abap_hash_key WITH UNIQUE KEY srp_id.
   TYPES:
     "! Description of the RETURNING parameter of a class method if the sense it's
     "! expected to be a factory method).
@@ -13,7 +8,6 @@ INTERFACE zif_soar_manager
       parameter_name TYPE string,
       bound_optional TYPE abap_bool,
     END OF ty_result_object.
-  TYPES ty_abap_source_code TYPE STANDARD TABLE OF string WITH EMPTY KEY.
   TYPES: BEGIN OF ty_generate_subroutine_pool,
            name         TYPE syrepid,
            message      TYPE string,

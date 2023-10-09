@@ -33,8 +33,7 @@ INTERFACE zif_soar_manager
     RETURNING
       VALUE(result) TYPE REF TO object
     RAISING
-      cx_static_check
-      cx_dynamic_check.
+      zcx_soar.
 
   CLASS-METHODS create
     IMPORTING
@@ -54,8 +53,7 @@ INTERFACE zif_soar_manager
     RETURNING
       VALUE(result) TYPE REF TO object
     RAISING
-      cx_static_check
-      cx_dynamic_check.
+      zcx_soar.
 
   METHODS get_last_generate_subr_pool
     RETURNING

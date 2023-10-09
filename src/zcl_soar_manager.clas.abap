@@ -7,8 +7,18 @@ CLASS zcl_soar_manager DEFINITION
 
     INTERFACES zif_soar_manager.
 
+    ALIASES create FOR zif_soar_manager~create.
+
   PROTECTED SECTION.
   PRIVATE SECTION.
+
+    TYPES: BEGIN OF ty_manager,
+             srp_id   TYPE zsoar_srp_id,
+             instance TYPE REF TO zcl_soar_manager,
+           END OF ty_manager.
+    TYPES ty_managers TYPE HASHED TABLE OF ty_manager WITH UNIQUE KEY srp_id.
+
+    CLASS-DATA managers TYPE ty_managers.
 
     DATA srp_id TYPE zsoar_srp_id.
     DATA info_generate_subroutine_pool TYPE zif_soar_manager=>ty_generate_subroutine_pool.
@@ -114,7 +124,12 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
     ELSE.
 
-      DATA(abap_source_code) = provider->get_abap_source_code( srp_id ).
+      TRY.
+          DATA(abap_source_code) = provider->get_abap_source_code( srp_id ).
+        CATCH zcx_soar INTO error.
+          RAISE EXCEPTION NEW zcx_soar( text     = 'Error while getting the ABAP source code'(009)
+                                        previous = error ).
+      ENDTRY.
 
       " Calculate the hash key
       TRY.
@@ -187,22 +202,33 @@ CLASS zcl_soar_manager IMPLEMENTATION.
     " Execution
     "=============
 
-    IF via_perform = abap_false.
+    TRY.
 
-      DATA(absolute_name) = |\\PROGRAM={ zif_soar_manager~srp_name }\\CLASS={ class_name }|.
-      CALL METHOD (absolute_name)=>(method_name)
-        PARAMETER-TABLE <parameters>
-        EXCEPTION-TABLE exceptions_.
+        IF via_perform = abap_false.
 
-    ELSE.
+          DATA(absolute_name) = |\\PROGRAM={ zif_soar_manager~srp_name }\\CLASS={ class_name }|.
+          CALL METHOD (absolute_name)=>(method_name)
+            PARAMETER-TABLE <parameters>
+            EXCEPTION-TABLE exceptions_.
 
-      PERFORM call_static_method IN PROGRAM (zif_soar_manager~srp_name)
-        USING class_name
-              method_name
-              <parameters>
-              exceptions_.
+        ELSE.
 
-    ENDIF.
+          PERFORM call_static_method IN PROGRAM (zif_soar_manager~srp_name)
+            USING class_name
+                  method_name
+                  <parameters>
+                  exceptions_.
+
+        ENDIF.
+
+      CATCH cx_root INTO DATA(error).
+        RAISE EXCEPTION TYPE zcx_soar
+          EXPORTING
+            text     = 'Error in method &2 of class &1'(007)
+            msgv1    = class_name
+            msgv2    = method_name
+            previous = error.
+    ENDTRY.
 
     "=============
     " Follow-up
@@ -236,14 +262,25 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
   METHOD zif_soar_manager~create.
 
-    DATA(soar_manager) = NEW zcl_soar_manager( ).
+    DATA(manager) = REF #( managers[ srp_id = srp_id ] OPTIONAL ).
 
-    soar_manager->srp_id = srp_id.
-    soar_manager->provider = provider.
+    IF manager IS NOT BOUND.
 
-    soar_manager->initialize( ).
+      INSERT VALUE #(
+              srp_id = srp_id
+          ) INTO TABLE managers
+          REFERENCE INTO manager.
 
-    result = soar_manager.
+      manager->instance = NEW zcl_soar_manager( ).
+
+      manager->instance->srp_id = srp_id.
+      manager->instance->provider = provider.
+
+      manager->instance->initialize( ).
+
+    ENDIF.
+
+    result = manager->instance.
 
   ENDMETHOD.
 
@@ -251,22 +288,32 @@ CLASS zcl_soar_manager IMPLEMENTATION.
   METHOD zif_soar_manager~create_object.
     FIELD-SYMBOLS <parameters> TYPE abap_parmbind_tab.
 
-    IF via_perform = abap_false.
+    TRY.
 
-      DATA(absolute_name) = |\\PROGRAM={ zif_soar_manager~srp_name }\\CLASS={ class_name }|.
-      CREATE OBJECT result TYPE (absolute_name)
-                            PARAMETER-TABLE parameters
-                            EXCEPTION-TABLE exceptions_.
+        IF via_perform = abap_false.
 
-    ELSE.
+          DATA(absolute_name) = |\\PROGRAM={ zif_soar_manager~srp_name }\\CLASS={ class_name }|.
+          CREATE OBJECT result TYPE (absolute_name)
+                                PARAMETER-TABLE parameters
+                                EXCEPTION-TABLE exceptions_.
 
-      PERFORM create_object IN PROGRAM (zif_soar_manager~srp_name)
-        USING    class_name
-                 parameters
-                 exceptions_
-        CHANGING result.
+        ELSE.
 
-    ENDIF.
+          PERFORM create_object IN PROGRAM (zif_soar_manager~srp_name)
+            USING    class_name
+                     parameters
+                     exceptions_
+            CHANGING result.
+
+        ENDIF.
+
+      CATCH cx_root INTO DATA(error).
+        RAISE EXCEPTION TYPE zcx_soar
+          EXPORTING
+            text     = 'Error in NEW / CREATE OBJECT of class &1'(008)
+            msgv1    = class_name
+            previous = error.
+    ENDTRY.
 
   ENDMETHOD.
 

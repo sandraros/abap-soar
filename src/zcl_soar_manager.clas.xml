@@ -31,6 +31,24 @@
      <ENTRY>Generation error &amp;1 at line &amp;2: &amp;3</ENTRY>
      <LENGTH>68</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>007</KEY>
+     <ENTRY>Error in method &amp;2 of class &amp;1</ENTRY>
+     <LENGTH>82</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>008</KEY>
+     <ENTRY>Error in NEW / CREATE OBJECT of class &amp;1</ENTRY>
+     <LENGTH>80</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>009</KEY>
+     <ENTRY>Error while getting the ABAP source code</ENTRY>
+     <LENGTH>82</LENGTH>
+    </item>
    </TPOOL>
   </asx:values>
  </asx:abap>

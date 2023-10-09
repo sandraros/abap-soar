@@ -7,6 +7,8 @@ INTERFACE zif_soar_provider
     IMPORTING
       srp_id        type zsoar_srp_id
     RETURNING
-      VALUE(result) TYPE ty_abap_source_code.
+      VALUE(result) TYPE ty_abap_source_code
+    RAISING
+      zcx_soar.
 
 ENDINTERFACE.

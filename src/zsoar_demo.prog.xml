@@ -12,6 +12,29 @@
    </PROGDIR>
    <TPOOL>
     <item>
+     <ID>R</ID>
+     <ENTRY>Demonstration</ENTRY>
+     <LENGTH>13</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>Start a new internal session</ENTRY>
+     <LENGTH>56</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>002</KEY>
+     <ENTRY>Name of last subroutine pool used</ENTRY>
+     <LENGTH>66</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>003</KEY>
+     <ENTRY>Execute</ENTRY>
+     <LENGTH>64</LENGTH>
+    </item>
+    <item>
      <ID>I</ID>
      <KEY>B01</KEY>
      <ENTRY>Outsourced/In-house</ENTRY>
@@ -22,11 +45,6 @@
      <KEY>B02</KEY>
      <ENTRY>Way to create object/call method of local class in Subroutine Pool</ENTRY>
      <LENGTH>116</LENGTH>
-    </item>
-    <item>
-     <ID>R</ID>
-     <ENTRY>Demonstration</ENTRY>
-     <LENGTH>13</LENGTH>
     </item>
     <item>
      <ID>S</ID>
@@ -55,14 +73,14 @@
     <item>
      <ID>S</ID>
      <KEY>INHOUSE</KEY>
-     <ENTRY>In-house ABAP code</ENTRY>
+     <ENTRY>In-house</ENTRY>
      <LENGTH>26</LENGTH>
     </item>
     <item>
      <ID>S</ID>
      <KEY>OUTSOURC</KEY>
-     <ENTRY>Generate Subroutine Pool</ENTRY>
-     <LENGTH>37</LENGTH>
+     <ENTRY>Outsourced /Generated 1st time</ENTRY>
+     <LENGTH>38</LENGTH>
     </item>
    </TPOOL>
   </asx:values>

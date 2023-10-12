@@ -1,3 +1,32 @@
+**********************************************************************
+*
+* https://github.com/sandraros/abap-soar
+*
+**********************************************************************
+*
+* MIT License
+*
+* Copyright (c) 2023 sandraros
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*
+**********************************************************************
 CLASS zcl_soar_manager DEFINITION
   PUBLIC
   FINAL
@@ -8,6 +37,17 @@ CLASS zcl_soar_manager DEFINITION
     INTERFACES zif_soar_manager.
 
     ALIASES create FOR zif_soar_manager~create.
+
+    CLASS-METHODS create_with_dynamic_provider
+      IMPORTING
+        srp_id               TYPE csequence
+        provider_class_name  TYPE csequence
+        provider_method_name TYPE csequence
+      RETURNING
+        VALUE(result)        TYPE REF TO object
+      RAISING
+        cx_static_check
+        cx_dynamic_check.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -80,28 +120,51 @@ CLASS zcl_soar_manager IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD create_with_dynamic_provider.
+
+    result = lcl_manager_w_dynamic_provider=>create(
+        srp_id               = srp_id
+        provider_class_name  = provider_class_name
+        provider_method_name = provider_method_name ).
+
+  ENDMETHOD.
+
+
   METHOD generate_subroutine_pool.
 
-    GENERATE SUBROUTINE POOL abap_source_code
-        NAME         result-name
-        MESSAGE      result-message
-        LINE         result-line
-        WORD         result-word
-        INCLUDE      result-include
-        MESSAGE-ID   result-message_id
-        OFFSET       result-offset
-        SHORTDUMP-ID result-shortdump_id.
+    TRY.
 
-    IF sy-subrc <> 0.
+        GENERATE SUBROUTINE POOL abap_source_code
+            NAME         result-name
+            MESSAGE      result-message
+            LINE         result-line
+            WORD         result-word
+            INCLUDE      result-include
+            MESSAGE-ID   result-message_id
+            OFFSET       result-offset
+            SHORTDUMP-ID result-shortdump_id.
 
-      RAISE EXCEPTION TYPE zcx_soar
-        EXPORTING
-          text  = 'Generation error &1 at line &2: &3'(003)
-          msgv1 = |{ sy-subrc }|
-          msgv2 = |{ result-line }|
-          msgv3 = result-message.
+        IF sy-subrc <> 0.
 
-    ENDIF.
+          RAISE EXCEPTION TYPE zcx_soar
+            EXPORTING
+              text  = 'Generation error &1 at line &2: &3'(003)
+              msgv1 = |{ sy-subrc }|
+              msgv2 = |{ result-line }|
+              msgv3 = result-message.
+
+        ENDIF.
+
+      CATCH cx_sy_generate_subpool_full
+        cx_sy_gen_source_too_wide
+        INTO DATA(error).
+
+        RAISE EXCEPTION TYPE zcx_soar
+          EXPORTING
+            text     = 'Global generation error'
+            previous = error.
+
+    ENDTRY.
 
   ENDMETHOD.
 

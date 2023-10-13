@@ -190,15 +190,19 @@ CLASS zcl_soar_manager IMPLEMENTATION.
       TRY.
           DATA(abap_source_code) = provider->get_abap_source_code( srp_id ).
         CATCH zcx_soar INTO error.
-          RAISE EXCEPTION NEW zcx_soar( text     = 'Error while getting the ABAP source code'(009)
-                                        previous = error ).
+          RAISE EXCEPTION TYPE zcx_soar
+            EXPORTING
+              text     = 'Error while getting the ABAP source code'(009)
+              previous = error.
       ENDTRY.
 
       " Calculate the hash key
       TRY.
           DATA(hash_key) = get_hash_key( abap_source_code ).
         CATCH cx_abap_message_digest INTO error.
-          RAISE EXCEPTION NEW zcx_soar( text = 'Hash key calculation error. Please contact the support.'(006) ).
+          RAISE EXCEPTION TYPE zcx_soar
+            EXPORTING
+              text = 'Hash key calculation error. Please contact the support.'(006).
       ENDTRY.
 
       " Check authorizations for the hash key
@@ -213,9 +217,11 @@ CLASS zcl_soar_manager IMPLEMENTATION.
             ID 'ZSOAR_DATE' FIELD sy-datum.
 
         IF sy-subrc <> 0.
-          RAISE EXCEPTION NEW zcx_soar( text  = 'This version of the ABAP code is not authorized (&1 - &2)'(010)
-                                        msgv1 = srp_id
-                                        msgv2 = hash_key ).
+          RAISE EXCEPTION TYPE zcx_soar
+            EXPORTING
+              text  = 'This version of the ABAP code is not authorized (&1 - &2)'(010)
+              msgv1 = srp_id
+              msgv2 = hash_key.
         ENDIF.
       ENDIF.
 

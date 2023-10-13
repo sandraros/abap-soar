@@ -4,7 +4,7 @@
   <asx:values>
    <AUTHX>
     <FIELDNAME>ZSOAR_DATE</FIELDNAME>
-    <ROLLNAME>DATUM</ROLLNAME>
+    <ROLLNAME>ZSOAR_DATE</ROLLNAME>
    </AUTHX>
   </asx:values>
  </asx:abap>

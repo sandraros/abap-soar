@@ -33,6 +33,12 @@
     </item>
     <item>
      <ID>I</ID>
+     <KEY>006</KEY>
+     <ENTRY>Hash key calculation error. Please contact the support.</ENTRY>
+     <LENGTH>110</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
      <KEY>007</KEY>
      <ENTRY>Error in method &amp;2 of class &amp;1</ENTRY>
      <LENGTH>82</LENGTH>
@@ -48,6 +54,18 @@
      <KEY>009</KEY>
      <ENTRY>Error while getting the ABAP source code</ENTRY>
      <LENGTH>82</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>010</KEY>
+     <ENTRY>This version of the ABAP code is not authorized (&amp;1 - &amp;2)</ENTRY>
+     <LENGTH>114</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>011</KEY>
+     <ENTRY>Global generation error</ENTRY>
+     <LENGTH>46</LENGTH>
     </item>
    </TPOOL>
   </asx:values>

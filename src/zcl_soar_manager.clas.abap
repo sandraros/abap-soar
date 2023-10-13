@@ -161,7 +161,7 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
         RAISE EXCEPTION TYPE zcx_soar
           EXPORTING
-            text     = 'Global generation error'
+            text     = 'Global generation error'(011)
             previous = error.
 
     ENDTRY.
@@ -213,8 +213,9 @@ CLASS zcl_soar_manager IMPLEMENTATION.
             ID 'ZSOAR_DATE' FIELD sy-datum.
 
         IF sy-subrc <> 0.
-          RAISE EXCEPTION NEW zcx_soar( text  = 'This version of the ABAP code is not authorized'(010)
-                                        msgv1 = srp_id ).
+          RAISE EXCEPTION NEW zcx_soar( text  = 'This version of the ABAP code is not authorized (&1 - &2)'(010)
+                                        msgv1 = srp_id
+                                        msgv2 = hash_key ).
         ENDIF.
       ENDIF.
 
@@ -232,7 +233,7 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
     cl_abap_message_digest=>calculate_hash_for_char(
       EXPORTING
-        if_algorithm     = 'MD5'
+        if_algorithm     = 'MD5' ##NO_TEXT
         if_data          = concat_lines_of( sep = |\n| table = abap_source_code )
       IMPORTING
         ef_hashb64string = DATA(md5_hash_key) ).
@@ -329,17 +330,17 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
     IF manager IS NOT BOUND.
 
+      DATA(manager_instance) = NEW zcl_soar_manager( ).
+
+      manager_instance->srp_id = srp_id.
+      manager_instance->provider = provider.
+      manager_instance->initialize( ).
+
       INSERT VALUE #(
-              srp_id = srp_id
+              srp_id   = srp_id
+              instance = manager_instance
           ) INTO TABLE managers
           REFERENCE INTO manager.
-
-      manager->instance = NEW zcl_soar_manager( ).
-
-      manager->instance->srp_id = srp_id.
-      manager->instance->provider = provider.
-
-      manager->instance->initialize( ).
 
     ENDIF.
 

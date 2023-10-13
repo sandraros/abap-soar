@@ -4,7 +4,7 @@
   <asx:values>
    <AUTHX>
     <FIELDNAME>ZSOAR_HASH</FIELDNAME>
-    <ROLLNAME>DYN_ABAP_DTE_FINGERPRINT</ROLLNAME>
+    <ROLLNAME>ZSOAR_HASH</ROLLNAME>
    </AUTHX>
   </asx:values>
  </asx:abap>

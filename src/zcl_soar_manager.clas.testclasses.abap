@@ -40,8 +40,10 @@ CLASS ltc_generate_subroutine_pool_2 DEFINITION
     CLASS-DATA abap_source_code TYPE zif_soar_provider=>ty_abap_source_code.
     CLASS-DATA manager TYPE REF TO zif_soar_manager.
     CLASS-DATA provider TYPE REF TO ltc_generate_subroutine_pool_2.
+    CLASS-DATA class_setup_exception TYPE REF TO cx_root.
 
     CLASS-METHODS class_setup.
+    METHODS setup.
 
 ENDCLASS.
 
@@ -66,8 +68,10 @@ CLASS ltc_instantiate_inhousedev DEFINITION
 
     CLASS-DATA manager TYPE REF TO zif_soar_manager.
     CLASS-DATA provider TYPE REF TO ltc_generate_subroutine_pool_2.
+    CLASS-DATA class_setup_exception TYPE REF TO cx_root.
 
     CLASS-METHODS class_setup.
+    METHODS setup.
 
 ENDCLASS.
 
@@ -145,13 +149,19 @@ CLASS ltc_generate_subroutine_pool_2 IMPLEMENTATION.
             ( `ENDCLASS.                                                   ` ) ).
 
     provider = NEW ltc_generate_subroutine_pool_2( ).
-    manager = zcl_soar_manager=>zif_soar_manager~create( srp_id   = srp_id
-                                                         provider = provider ).
+
+    TRY.
+        manager = zcl_soar_manager=>zif_soar_manager~create( srp_id   = srp_id
+                                                             provider = provider ).
+      CATCH zcx_soar INTO class_setup_exception.
+        RETURN.
+    ENDTRY.
+
     cl_abap_unit_assert=>assert_char_cp( act = manager->srp_name
                                          exp = '%_T*' ).
     " Warning message
     cl_abap_unit_assert=>fail( msg   = |NOT AN ERROR, is for information. Generated subroutine pool: { manager->srp_name }|
-                               level = if_aunit_constants=>TOLERABLE
+                               level = if_aunit_constants=>tolerable
                                quit  = if_aunit_constants=>no ).
 
   ENDMETHOD.
@@ -223,6 +233,13 @@ CLASS ltc_generate_subroutine_pool_2 IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD setup.
+
+    cl_abap_unit_assert=>assert_not_bound( act = class_setup_exception msg = 'Exception during CLASS_SETUP' ).
+
+  ENDMETHOD.
+
+
   METHOD zif_soar_provider~get_abap_source_code.
 
     result = abap_source_code.
@@ -244,10 +261,22 @@ CLASS ltc_instantiate_inhousedev IMPLEMENTATION.
           inactive             = abap_false ) ).
 
     MODIFY zsoar_inhousedev FROM TABLE @table_zsoar_inhousedev.
+    IF sy-subrc <> 0.
+      TRY.
+          RAISE EXCEPTION TYPE zcx_soar EXPORTING text = 'MODIFY zsoar_inhousedev failed'(013).
+        CATCH zcx_soar INTO class_setup_exception.
+          RETURN.
+      ENDTRY.
+    ENDIF.
 
     provider = NEW ltc_generate_subroutine_pool_2( ).
-    manager = zcl_soar_manager=>zif_soar_manager~create( srp_id   = srp_id
-                                                         provider = provider ).
+
+    TRY.
+        manager = zcl_soar_manager=>zif_soar_manager~create( srp_id   = srp_id
+                                                             provider = provider ).
+      CATCH zcx_soar INTO class_setup_exception.
+        RETURN.
+    ENDTRY.
 
   ENDMETHOD.
 
@@ -314,6 +343,13 @@ CLASS ltc_instantiate_inhousedev IMPLEMENTATION.
                                         exp = '\PROGRAM=ZSOAR_MANAGER_TEST_INHOUSEDEV\CLASS=LCL_TEST' ).
     cl_abap_unit_assert=>assert_equals( act = square_of_3
                                         exp = 9 ).
+
+  ENDMETHOD.
+
+
+  METHOD setup.
+
+    cl_abap_unit_assert=>assert_not_bound( act = class_setup_exception msg = 'Exception during CLASS_SETUP' ).
 
   ENDMETHOD.
 

@@ -67,7 +67,7 @@ CLASS lcl_soar_provider IMPLEMENTATION.
             ( `  METHOD zif_soar_demo~popup.                   ` )
             ( `    MESSAGE text TYPE 'I'.                      ` )
             ( `  ENDMETHOD.                                    ` )
-            ( `ENDCLASS.                                       ` ) ).
+            ( `ENDCLASS.                                       ` ) ) ##NO_TEXT.
 
   ENDMETHOD.
 
@@ -135,6 +135,9 @@ AT SELECTION-SCREEN.
                                                ELSE 'ZSOAR_DEMO_INHOUSEDEV_FULL_OO' )
                 inactive             = xsdbool( inhouse = abap_false ) ).
           MODIFY zsoar_inhousedev FROM @zsoar_inhousedev.
+          IF sy-subrc <> 0.
+            RAISE EXCEPTION TYPE zcx_soar EXPORTING text = 'MODIFY zsoar_inhousedev has failed'(005).
+          ENDIF.
           COMMIT WORK.
 
           DATA(soar_provider) = lcl_soar_provider=>create( ).
@@ -151,7 +154,7 @@ AT SELECTION-SCREEN.
                                                                via_perform   = xsdbool( form = abap_true ) )
                         ELSE soar_manager->create_object( class_name  = 'LCL_SOAR_DEMO'
                                                           via_perform = xsdbool( form = abap_true ) ) ) ).
-          demo->popup( 'Hello world' ).
+          demo->popup( 'Hello world'(004) ).
 
           srp_name = soar_manager->srp_name.
 

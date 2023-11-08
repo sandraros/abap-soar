@@ -33,6 +33,18 @@
     </item>
     <item>
      <ID>I</ID>
+     <KEY>004</KEY>
+     <ENTRY>Subroutine pool &amp;1 does not exist</ENTRY>
+     <LENGTH>66</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>005</KEY>
+     <ENTRY>Program &amp;1 is of type &amp;2 but should be S (Subroutine pool)</ENTRY>
+     <LENGTH>116</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
      <KEY>006</KEY>
      <ENTRY>Hash key calculation error. Please contact the support.</ENTRY>
      <LENGTH>110</LENGTH>
@@ -66,6 +78,18 @@
      <KEY>011</KEY>
      <ENTRY>Global generation error</ENTRY>
      <LENGTH>46</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>012</KEY>
+     <ENTRY>SOAR Internal Error. Please contact support.</ENTRY>
+     <LENGTH>88</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>013</KEY>
+     <ENTRY>MODIFY zsoar_inhousedev failed</ENTRY>
+     <LENGTH>60</LENGTH>
     </item>
    </TPOOL>
   </asx:values>

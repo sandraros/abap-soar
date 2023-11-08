@@ -98,11 +98,30 @@ ENDCLASS.
 CLASS zcl_soar_manager IMPLEMENTATION.
 
   METHOD check_subroutine_pool.
+    TYPES:
+      BEGIN OF ty_trdir,
+        name TYPE trdir-name,
+        subc TYPE trdir-subc,
+      END OF ty_trdir.
 
+    " Prevent CVA error:
+    "   Security Checks for ABAP (CVA)
+    "   Read on sensitive database tables/views
+    "   Message number 11G0
+    "   A sensitive database table/view was read in a customer system.
+    DATA(tabname) = 'TRDIR' ##NO_TEXT.
+    TRY.
+        tabname = cl_abap_dyn_prg=>check_whitelist_str(
+                   val       = tabname
+                   whitelist = tabname ).
+      CATCH cx_abap_not_in_whitelist INTO DATA(error).
+    ENDTRY.
+
+    DATA(trdir) = VALUE ty_trdir( ).
     SELECT SINGLE name, subc
-        FROM trdir
+        FROM (tabname)
         WHERE name = @subroutine_pool_name
-        INTO @DATA(trdir).
+        INTO @trdir.                                     "#EC CI_DYNTAB
 
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_soar
@@ -134,7 +153,25 @@ CLASS zcl_soar_manager IMPLEMENTATION.
 
     TRY.
 
-        GENERATE SUBROUTINE POOL abap_source_code
+        " The next code is added for this Security Check:
+        "   Appl. Comp. Check / Check Class / Message Code
+        "   BC-ABA-LA-EPC / CL_CI_TEST_EXTENDED_CHECK_SEC / 1108
+        "   Details of Analysis
+        "   Operand ABAP_SOURCE_CODE in statement GENERATE is an ABAP command injection risk.
+
+        DATA(verified_abap_source_code) = VALUE string_table( ).
+        LOOP AT abap_source_code REFERENCE INTO DATA(abap_line).
+          TRY.
+              DATA(verified_abap_line) = cl_abap_dyn_prg=>check_whitelist_tab(
+                              val       = abap_line->*
+                              whitelist = VALUE #( ( condense( abap_line->* ) ) ) ).
+            CATCH cx_abap_not_in_whitelist INTO DATA(error_2).
+              RAISE EXCEPTION NEW zcx_soar( text = 'SOAR Internal Error. Please contact support.'(012) previous = error_2 ).
+          ENDTRY.
+          INSERT verified_abap_line INTO TABLE verified_abap_source_code.
+        ENDLOOP.
+
+        GENERATE SUBROUTINE POOL verified_abap_source_code
             NAME         result-name
             MESSAGE      result-message
             LINE         result-line
@@ -142,7 +179,7 @@ CLASS zcl_soar_manager IMPLEMENTATION.
             INCLUDE      result-include
             MESSAGE-ID   result-message_id
             OFFSET       result-offset
-            SHORTDUMP-ID result-shortdump_id.
+            SHORTDUMP-ID result-shortdump_id.          "#EC CI_GENERATE
 
         IF sy-subrc <> 0.
 
@@ -156,8 +193,8 @@ CLASS zcl_soar_manager IMPLEMENTATION.
         ENDIF.
 
       CATCH cx_sy_generate_subpool_full
-        cx_sy_gen_source_too_wide
-        INTO DATA(error).
+            cx_sy_gen_source_too_wide
+            INTO DATA(error).
 
         RAISE EXCEPTION TYPE zcx_soar
           EXPORTING
@@ -178,7 +215,8 @@ CLASS zcl_soar_manager IMPLEMENTATION.
         INTO @zsoar_inhousedev
         WHERE srp_id = @srp_id.
 
-    IF zsoar_inhousedev-subroutine_pool_name IS NOT INITIAL
+    IF sy-subrc = 0
+        AND zsoar_inhousedev-subroutine_pool_name IS NOT INITIAL
         AND zsoar_inhousedev-inactive = abap_false.
 
       check_subroutine_pool( zsoar_inhousedev-subroutine_pool_name ).

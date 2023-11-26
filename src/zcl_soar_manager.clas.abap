@@ -166,7 +166,10 @@ CLASS zcl_soar_manager IMPLEMENTATION.
                               val       = abap_line->*
                               whitelist = VALUE #( ( condense( abap_line->* ) ) ) ).
             CATCH cx_abap_not_in_whitelist INTO DATA(error_2).
-              RAISE EXCEPTION NEW zcx_soar( text = 'SOAR Internal Error. Please contact support.'(012) previous = error_2 ).
+              RAISE EXCEPTION TYPE zcx_soar
+                EXPORTING
+                  text = 'SOAR Internal Error. Please contact support.'(012)
+                  previous = error_2.
           ENDTRY.
           INSERT verified_abap_line INTO TABLE verified_abap_source_code.
         ENDLOOP.
